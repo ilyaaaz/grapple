@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Timeline;
 
 public class Hook : MonoBehaviour
 {
@@ -14,7 +13,8 @@ public class Hook : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         cld = GetComponent<PolygonCollider2D>();
         transform.position = GameManager.instance.player.transform.position;
-        shootOff();
+        ShootOff();
+        CreateRope();
     }
 
     // Update is called once per frame
@@ -23,7 +23,8 @@ public class Hook : MonoBehaviour
 
     }
 
-    void shootOff()
+    //move hook
+    void ShootOff()
     {
         //direction
         Vector3 mousePos = GameManager.instance.getMousePos();
@@ -32,6 +33,7 @@ public class Hook : MonoBehaviour
         rb.AddForce(direction * hookLaunchingSpeed);
     }
 
+    //turn on cld after exit the player
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject == GameManager.instance.player)
@@ -40,8 +42,31 @@ public class Hook : MonoBehaviour
         }
     }
 
+    //destroy if out of the room
     private void OnBecameInvisible()
     {
         Destroy(gameObject);
+    }
+
+    //check if hit walls
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.name.Contains("Wall"))
+        {
+            Hooked();
+        }
+    }
+
+    //create rope
+    void CreateRope()
+    {
+        Instantiate(GameManager.instance.ropePrefab);
+    }
+
+    void Hooked()
+    {
+        rb.velocity = Vector3.zero;
+        Destroy(rb);
+        GameManager.instance.isHooked = true;
     }
 }
