@@ -16,6 +16,8 @@ public class Player : MonoBehaviour
     public float jumpForce;
     public float pullForce;//pull rope
 
+    //hook
+    float pullTime;
 
     private void Awake()
     {
@@ -68,8 +70,7 @@ public class Player : MonoBehaviour
         dy = Input.GetAxis("Vertical");
 
         //time ability
-        GameManager.instance.tree.SetFloat("Speed", -dy);
-        GameManager.instance.weird.SetFloat("Speed", -dy);
+        GameManager.instance.ChangeAnimationSpeed(dy);
     }
 
     void ShootHook()
@@ -81,6 +82,7 @@ public class Player : MonoBehaviour
             {
                 GameManager.instance.currentHook = Instantiate(GameManager.instance.hookPrefab);
                 GameManager.instance.hookOut = true;
+                pullTime = 1f; //reset pull time
             }
         }
         else if (Input.GetMouseButtonUp(0))//release
@@ -94,9 +96,10 @@ public class Player : MonoBehaviour
         //right click to drag
         if (GameManager.instance.currentHook && GameManager.instance.isHooked && Input.GetMouseButton(1))
         {
+            pullTime += Time.deltaTime;
             Vector3 direction = GameManager.instance.currentHook.transform.position - transform.position;
             direction.Normalize();
-            rb.AddForce(direction * pullForce);
+            rb.AddForce(direction * pullForce * pullTime);
         }
     }
 }

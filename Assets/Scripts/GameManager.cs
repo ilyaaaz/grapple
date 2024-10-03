@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -17,8 +18,7 @@ public class GameManager : MonoBehaviour
     public bool isHooked;
 
     [Header("Animation")]
-    public Animator tree;
-    public Animator weird;
+    public List<Animator> animators = new List<Animator>();
     
 
     // Start is called before the first frame update
@@ -54,5 +54,30 @@ public class GameManager : MonoBehaviour
         return mousePos;
     }
 
+    public void ChangeAnimationSpeed(float speed)
+    {
+        
+        for (int i = 0; i < animators.Count; i++)
+        {
+            //animators[i].SetFloat("Speed", speed);
+            AnimatorStateInfo stateInfo = animators[i].GetCurrentAnimatorStateInfo(0);
+            float currentTime = Mathf.Round(stateInfo.normalizedTime % 1.0f * 10f) / 10f;
 
+            if (currentTime <= 1f && speed > 0) // 如果还没有到最后一帧
+            {
+                Debug.Log(currentTime + " " + animators[i].name + " " + speed + " 111");
+                animators[i].SetFloat("Speed", speed);
+            }
+            else if (currentTime >= 0f && speed < 0)
+            {
+                Debug.Log(currentTime + " " + animators[i].name + " " + speed + " 222");
+                animators[i].SetFloat("Speed", speed);
+            } else
+            {
+                Debug.Log(currentTime + " " + animators[i].name + " " + speed + " 000");
+                animators[i].SetFloat("Speed", 0f);
+            }
+        }
+
+    }
 }
