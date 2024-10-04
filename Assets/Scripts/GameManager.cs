@@ -59,25 +59,20 @@ public class GameManager : MonoBehaviour
         
         for (int i = 0; i < animators.Count; i++)
         {
-            //animators[i].SetFloat("Speed", speed);
-            AnimatorStateInfo stateInfo = animators[i].GetCurrentAnimatorStateInfo(0);
-            float currentTime = Mathf.Round(stateInfo.normalizedTime % 1.0f * 10f) / 10f;
-
-            if (currentTime <= 1f && speed > 0) // 如果还没有到最后一帧
+            if (speed > 0 && !animators[i].GetBool("LastFrame")) // 如果还没有到最后一帧
             {
-                Debug.Log(currentTime + " " + animators[i].name + " " + speed + " 111");
                 animators[i].SetFloat("Speed", speed);
             }
-            else if (currentTime >= 0f && speed < 0)
+            else if (speed < 0 && !animators[i].GetBool("FirstFrame"))
             {
-                Debug.Log(currentTime + " " + animators[i].name + " " + speed + " 222");
                 animators[i].SetFloat("Speed", speed);
             } else
             {
-                Debug.Log(currentTime + " " + animators[i].name + " " + speed + " 000");
                 animators[i].SetFloat("Speed", 0f);
             }
         }
 
     }
+
+
 }
